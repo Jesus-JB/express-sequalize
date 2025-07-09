@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "576626Kroman",
+    "database": "programacionWeb",
+    "host": "db",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "576626Kroman",
+    "database": "programacionWeb",
+    "host": "db",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "576626Kroman",
+    "database": "programacionWeb",
+    "host": "db",
+    "dialect": "mysql"
+  }
+}

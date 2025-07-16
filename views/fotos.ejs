@@ -1,30 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<div class="container-fluid p-4">
-    <h1 class="pb-4"><%=title %></h1>
-    <table class="table table-striped table-hover">
-        <thead>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+
+    h1 {
+      color: #6c5b7b;
+    }
+
+    .card {
+      border: none;
+      border-radius: 1rem;
+      background-color: #fff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .table thead {
+      background-color: #ffe3ec;
+      color: #6c5b7b;
+    }
+
+    .table tbody tr {
+      background-color: #fffafc;
+    }
+
+    .table-bordered > :not(caption) > * > * {
+      border-color: #f9dbe7;
+    }
+
+    .badge {
+      background-color: #42deba;
+      color: #355c4d;
+      font-size: 0.85rem;
+    }
+
+    .img-thumbnail {
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 1px solid #f5d9e5;
+    }
+
+    .no-tags {
+      color: #b4b4b4;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container py-5">
+    <div class="card p-4">
+      <h1 class="text-center mb-4"><%= title %></h1>
+
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center rounded-3 overflow-hidden">
+          <thead>
             <tr>
-                <th>Id</th>
-                <th>Titulo</th>
-                <th>Descripcion</th>
-                <th>Ruta</th>
-                <th>Fecha de creacion</th>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Calificación</th>
+              <th>Imagen</th>
+              <th>Etiquetas</th>
             </tr>
-        </thead>
-        <tbody>
-            <% arrFotos.forEach((foto) => { %>
-                <tr>
-                    <td><%= foto.id %></td>
-                    <td><%= foto.titulo %></td>
-                    <td><%= foto.descripcion %></td>
-                    <td><%= foto.ruta %> </td>
-                    <td><%= foto.createdAt %></td>
+          </thead>
+          <tbody>
+            <% arrFotos.forEach(foto => { %>
+              <tr>
+                <td><%= foto.id %></td>
+                <td><strong><%= foto.titulo %></strong></td>
+                <td><%= foto.descripcion %></td>
+                <td>
+                  <span class="badge rounded-pill px-3 py-2"><%= foto.calificacion %></span>
+                </td>
+                <td>
+                  <img src="/<%= foto.ruta %>" alt="Foto" class="img-thumbnail">
+                </td>
+                <td>
+                  <% if (foto.Etiqueta && foto.Etiqueta.length > 0) { %>
+                    <% foto.Etiqueta.forEach(etiqueta => { %>
+                      <span class="badge me-1 mb-1"><%= etiqueta.texto %></span>
+                    <% }) %>
+                  <% } else { %>
+                    <span class="no-tags">Sin etiquetas</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
-</div>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

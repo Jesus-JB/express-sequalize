@@ -1,24 +1,43 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    
-    let [fotos, fotos_metadata] = await queryInterface.sequelize.query(
-      'SELECT id FROM fotos'
-    );
-    let [etiquetas, etiquetas_metadata] = await queryInterface.sequelize.query(
-      'SELECT id, texto FROM etiquetas'
-    );
+  async up(queryInterface, Sequelize) {
+    const [fotos] = await queryInterface.sequelize.query(`SELECT id FROM fotos ORDER BY id`);
+    const [etiquetas] = await queryInterface.sequelize.query(`SELECT id FROM etiquetas ORDER BY id`);
 
-    await queryInterface.bulkInsert('fotoetiquetas', [
-      { foto_id: fotos[0].id, etiqueta_id: etiquetas[0].id, createdAt: new Date(), updatedAt: new Date() },
-      { foto_id: fotos[0].id, etiqueta_id: etiquetas[1].id, createdAt: new Date(), updatedAt: new Date() },
-      { foto_id: fotos[1].id, etiqueta_id: etiquetas[1].id, createdAt: new Date(), updatedAt: new Date() },
-    ])
+    const relaciones = [];
+
+    for (let i = 0; i < fotos.length; i++) {
+      const foto = fotos[i];
+
+      // Obtener dos etiquetas usando índice rotatorio
+      const etiqueta1 = etiquetas[i % etiquetas.length];
+      const etiqueta2 = etiquetas[(i + 1) % etiquetas.length];
+
+      // Evitar etiquetas repetidas si solo hay una en total
+      if (etiqueta1) {
+        relaciones.push({
+          foto_id: foto.id,
+          etiqueta_id: etiqueta1.id,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+
+      if (etiqueta2 && etiqueta2.id !== etiqueta1.id) {
+        relaciones.push({
+          foto_id: foto.id,
+          etiqueta_id: etiqueta2.id,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+    }
+
+    await queryInterface.bulkInsert('fotoetiquetas', relaciones, {});
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('fotoetiquetas', null, {});
   }
 };

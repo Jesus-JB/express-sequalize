@@ -1,21 +1,19 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
+    const etiquetas = ['rojo', 'azul', 'techo', 'cielo', 'foco', 'luz'];
 
-    let etiquetas = ['foto','payaso','rojo','azul','techo','cielo','foco','luz']
-    for(let etiqueta of etiquetas) {
-      await queryInterface.bulkInsert('etiquetas', [{
-        texto: etiqueta,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }], {});
-    }
+    const data = etiquetas.map(texto => ({
+      texto,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }));
+
+    await queryInterface.bulkInsert('etiquetas', data, {});
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('etiquetas', null, {});
-
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('etiquetas',null, {});
+  }
 };

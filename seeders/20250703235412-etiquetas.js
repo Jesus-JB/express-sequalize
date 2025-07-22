@@ -10,10 +10,10 @@ module.exports = {
       updatedAt: new Date()
     }));
 
-    await queryInterface.bulkInsert('etiquetas', data, {});
+    await queryInterface.bulkInsert('etiqueta', data, {});
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('etiquetas',null, {});
+    await queryInterface.bulkDelete('etiqueta',null, {});
   }
-};
+}; 

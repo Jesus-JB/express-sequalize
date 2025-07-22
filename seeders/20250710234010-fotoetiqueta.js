@@ -2,8 +2,8 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const [fotos] = await queryInterface.sequelize.query(`SELECT id FROM fotos ORDER BY id`);
-    const [etiquetas] = await queryInterface.sequelize.query(`SELECT id FROM etiquetas ORDER BY id`);
+    const [fotos] = await queryInterface.sequelize.query(`SELECT id FROM foto ORDER BY id`);
+    const [etiquetas] = await queryInterface.sequelize.query(`SELECT id FROM etiqueta ORDER BY id`);
 
     const relaciones = [];
 
@@ -34,10 +34,10 @@ module.exports = {
       }
     }
 
-    await queryInterface.bulkInsert('fotoetiquetas', relaciones, {});
+    await queryInterface.bulkInsert('foto_etiqueta', relaciones, {});
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('fotoetiquetas', null, {});
+    await queryInterface.bulkDelete('foto_etiqueta', null, {});
   }
 };

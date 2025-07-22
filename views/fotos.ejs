@@ -62,6 +62,9 @@
   <div class="container py-5">
     <div class="card p-4">
       <h1 class="text-center mb-4"><%= title %></h1>
+      <div class="mb-4 text-end">
+        <a href="/fotos/new" class="btn btn-success">+ Nueva Foto</a>
+      </div>
 
       <div class="table-responsive">
         <table class="table table-bordered align-middle text-center rounded-3 overflow-hidden">
@@ -73,12 +76,13 @@
               <th>Calificación</th>
               <th>Imagen</th>
               <th>Etiquetas</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <% arrFotos.forEach(foto => { %>
               <tr>
-                <td><%= foto.id %></td>
+                <td><%= foto._id %></td>
                 <td><strong><%= foto.titulo %></strong></td>
                 <td><%= foto.descripcion %></td>
                 <td>
@@ -88,13 +92,19 @@
                   <img src="/<%= foto.ruta %>" alt="Foto" class="img-thumbnail">
                 </td>
                 <td>
-                  <% if (foto.Etiqueta && foto.Etiqueta.length > 0) { %>
-                    <% foto.Etiqueta.forEach(etiqueta => { %>
+                  <% if (foto.etiquetas && foto.etiquetas.length > 0) { %>
+                    <% foto.etiquetas.forEach(etiqueta => { %>
                       <span class="badge me-1 mb-1"><%= etiqueta.texto %></span>
                     <% }) %>
                   <% } else { %>
                     <span class="no-tags">Sin etiquetas</span>
                   <% } %>
+                </td>
+                <td>
+                  <a href="/fotos/<%= foto._id %>/edit" class="btn btn-sm btn-warning">Editar</a>
+                  <form action="/fotos/<%= foto._id %>/delete" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta foto?');">Eliminar</button>
+                  </form>
                 </td>
               </tr>
             <% }) %>

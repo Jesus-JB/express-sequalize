@@ -8,6 +8,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var fotosRouter = require('./routes/fotos');
 
+const connectDB = require('./config/mongoose.js');
+connectDB();
+
 var app = express();
 
 // view engine setup

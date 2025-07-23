@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Etiqueta = require('../models/etiqueta');
+const verificarJWT = require('../middleware/auth');
 
 // API REST
 // Obtener todas las etiquetas (JSON)
@@ -74,7 +75,7 @@ router.get('/new', (req, res) => {
 });
 
 // Crear etiqueta desde formulario
-router.post('/', async (req, res) => {
+router.post('/', verificarJWT, async (req, res) => {
   try {
     const etiqueta = new Etiqueta({ texto: req.body.texto });
     await etiqueta.save();
@@ -92,7 +93,7 @@ router.get('/:id/edit', async (req, res) => {
 });
 
 // Actualizar etiqueta desde formulario
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', verificarJWT, async (req, res) => {
   try {
     await Etiqueta.findByIdAndUpdate(req.params.id, { texto: req.body.texto });
     res.redirect('/etiquetas');
@@ -102,7 +103,7 @@ router.post('/:id/edit', async (req, res) => {
 });
 
 // Eliminar etiqueta
-router.post('/:id/delete', async (req, res) => {
+router.post('/:id/delete', verificarJWT, async (req, res) => {
   await Etiqueta.findByIdAndDelete(req.params.id);
   res.redirect('/etiquetas');
 });

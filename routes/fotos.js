@@ -6,6 +6,7 @@ const Etiqueta = require('../models/etiqueta');
 const multer = require('multer');
 const path = require('path');
 const mongoose = require('mongoose');
+const verificarJWT = require('../middleware/auth');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -50,7 +51,7 @@ router.get('/new', async (req, res) => {
 });
 
 // Procesar el formulario de creación de foto (con imagen)
-router.post('/new', upload.single('imagen'), async (req, res) => {
+router.post('/new', verificarJWT, upload.single('imagen'), async (req, res) => {
   try {
     console.log('req.file:', req.file);
     console.log('req.body:', req.body);
@@ -95,7 +96,7 @@ router.get('/:id/edit', async (req, res) => {
 });
 
 // Procesar la edición de una foto
-router.post('/:id/edit', upload.single('imagen'), async (req, res) => {
+router.post('/:id/edit', verificarJWT, upload.single('imagen'), async (req, res) => {
   try {
     const { titulo, descripcion, calificacion, etiquetas } = req.body;
     let updateData = {
@@ -115,7 +116,7 @@ router.post('/:id/edit', upload.single('imagen'), async (req, res) => {
 });
 
 // Eliminar una foto
-router.post('/:id/delete', async (req, res) => {
+router.post('/:id/delete', verificarJWT, async (req, res) => {
   try {
     console.log('Intentando eliminar foto con id:', req.params.id);
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

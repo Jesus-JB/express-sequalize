@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+<h1>Editar Etiqueta</h1>
+<% if (typeof error !== 'undefined') { %>
+  <div style="color:red"><%= error %></div>
+<% } %>
+<form action="/etiquetas/<%= etiqueta._id %>/edit" method="POST">
+  <label>Texto:</label>
+  <input type="text" name="texto" value="<%= etiqueta.texto %>" required>
+  <button type="submit">Actualizar</button>
+</form>
+<a href="/etiquetas">Volver</a>
+<%- include('partials/footer') %> 

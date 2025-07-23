@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h1><span style="font-size:1.2em;vertical-align:middle;">🏷️</span> Etiquetas</h1>
+  <div style="text-align:right;margin-bottom:18px;">
+    <a href="/etiquetas/new" class="btn">+ Nueva Etiqueta</a>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Texto</th>
+        <th style="width:140px;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% etiquetas.forEach(function(etiqueta) { %>
+        <tr>
+          <td><%= etiqueta.texto %></td>
+          <td>
+            <div class="actions">
+              <a href="/etiquetas/<%= etiqueta._id %>/edit" class="btn btn-secondary">Editar</a>
+              <form action="/etiquetas/<%= etiqueta._id %>/delete" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar etiqueta?')">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('partials/footer') %> 

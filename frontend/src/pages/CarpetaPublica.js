@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
+import LikeButton from "../components/LikeButton";
+import ComentariosGaleria from "../components/ComentariosGaleria";
 
 export default function CarpetaPublica() {
   const { id } = useParams();
@@ -53,6 +55,8 @@ export default function CarpetaPublica() {
                 className="w-full h-32 object-cover rounded mb-2"
               />
               <div className="text-xs text-center font-semibold mb-1">{foto.titulo}</div>
+              <LikeButton fotoId={foto._id} />
+              <ComentariosGaleria fotoId={foto._id} />
             </div>
           ))}
         </div>

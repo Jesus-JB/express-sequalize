@@ -11,7 +11,7 @@ const crypto = require('crypto');
 const Carpeta = require('../models/carpeta');
 const Foto = require('../models/foto');
 const Comentario = require('../models/comentario');
-const Like = require('../models/like');
+const Like = require('../models/galerialike');
 const GaleriaLike = require('../models/galerialike');
 
 // Registro de usuario (público, siempre rol usuario)

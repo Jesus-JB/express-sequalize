@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
+import LikeButton from "../components/LikeButton";
+import ComentariosGaleria from "../components/ComentariosGaleria";
 
 export default function CarpetaPersonal() {
   const { id } = useParams();
@@ -73,6 +75,8 @@ export default function CarpetaPersonal() {
                 className="w-full h-32 object-cover rounded mb-2"
               />
               <div className="text-xs text-center font-semibold mb-1">{foto.titulo}</div>
+              <LikeButton fotoId={foto._id} />
+              <ComentariosGaleria fotoId={foto._id} />
               <button
                 onClick={() => handleEliminarFoto(foto._id)}
                 className="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded font-semibold text-xs transition mt-1"

@@ -60,7 +60,7 @@ export default function PhotoDetail() {
         <div className="w-full flex justify-center mb-4">
           <div className="bg-gray-100 rounded-xl p-2 sm:p-4 md:p-6 w-full max-w-md h-72 flex items-center justify-center overflow-hidden group relative">
             <img
-              src={`http://localhost:3001/${foto.ruta}`}
+              src={`${process.env.REACT_APP_API_URL || "http://localhost:3001"}/${foto.ruta}`}
               alt={foto.titulo}
               className="max-h-64 w-auto max-w-full object-contain transform transition duration-300 group-hover:scale-105 group-hover:shadow-lg"
             />

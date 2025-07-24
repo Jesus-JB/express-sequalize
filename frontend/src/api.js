@@ -8,7 +8,7 @@ const api = axios.create({
 async function refreshAccessToken() {
   const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) throw new Error("No refresh token");
-  const res = await axios.post("http://localhost:3001/users/refresh-token", { refreshToken });
+  const res = await api.post("/users/refresh-token", { refreshToken });
   localStorage.setItem("token", res.data.accessToken);
   return res.data.accessToken;
 }

@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Configuración de variables de entorno
+
+Crea un archivo `.env` en la raíz de la carpeta `frontend` con el siguiente contenido (reemplaza la URL por la de tu backend en Render):
+
+```
+REACT_APP_API_URL=https://express-sequalize.onrender.com/
+```
+
+En Vercel, también debes agregar esta variable en la sección de Environment Variables del dashboard del proyecto.

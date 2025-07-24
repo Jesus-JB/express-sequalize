@@ -1,3 +1,6 @@
+import LikeButton from "./LikeButton";
+import ComentariosGaleria from "./ComentariosGaleria";
+
 export default function FotosSueltasList({ fotos, onEliminarFoto }) {
   if (!fotos || fotos.length === 0) {
     return <div className="text-gray-500">No tienes fotos sueltas.</div>;
@@ -12,6 +15,8 @@ export default function FotosSueltasList({ fotos, onEliminarFoto }) {
             className="w-full h-32 object-cover rounded mb-2"
           />
           <div className="text-xs text-center font-semibold mb-1">{foto.titulo}</div>
+          <LikeButton fotoId={foto._id} />
+          <ComentariosGaleria fotoId={foto._id} />
           <button
             onClick={() => onEliminarFoto(foto._id)}
             className="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded font-semibold text-xs transition mt-1"

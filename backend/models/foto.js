@@ -7,7 +7,8 @@ const FotoSchema = new mongoose.Schema({
   calificacion: Number,
   ruta: String,
   etiquetas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Etiqueta' }],
-  usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true }
+  usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true },
+  carpeta: { type: mongoose.Schema.Types.ObjectId, ref: 'Carpeta', default: null }
 });
 
 module.exports = mongoose.model('Foto', FotoSchema);

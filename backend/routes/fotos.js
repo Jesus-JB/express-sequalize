@@ -19,10 +19,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Obtener todas las fotos (JSON), incluyendo etiquetas
-router.get('/', async (req, res) => {
+// Obtener todas las fotos del usuario autenticado, con opción de filtrar por carpeta
+router.get('/', verificarJWT, async (req, res) => {
   try {
-    const fotos = await Foto.find().populate('etiquetas');
+    const filtro = { usuario: req.usuario.id };
+    if (req.query.carpeta) {
+      filtro.carpeta = req.query.carpeta;
+    }
+    const fotos = await Foto.find(filtro).populate('etiquetas');
     res.json(fotos);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -35,7 +39,9 @@ router.get('/:id', async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: 'ID de foto inválido' });
     }
-    const foto = await Foto.findById(req.params.id).populate('etiquetas');
+    const foto = await Foto.findById(req.params.id)
+      .populate('etiquetas')
+      .populate('usuario', 'email'); // Agregado: populate del email del usuario
     if (!foto) return res.status(404).json({ error: 'Foto no encontrada' });
     res.json(foto);
   } catch (error) {
@@ -43,10 +49,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Crear una nueva foto
+// Crear una nueva foto (puede ir en carpeta o suelta)
 router.post('/', verificarJWT, upload.single('imagen'), async (req, res) => {
   try {
-    const { titulo, descripcion, calificacion, etiquetas } = req.body;
+    const { titulo, descripcion, calificacion, etiquetas, carpeta } = req.body;
     let ruta = '';
     if (req.file) {
       ruta = 'images/' + req.file.filename;
@@ -59,7 +65,8 @@ router.post('/', verificarJWT, upload.single('imagen'), async (req, res) => {
       calificacion,
       ruta,
       etiquetas: Array.isArray(etiquetas) ? etiquetas : etiquetas ? [etiquetas] : [],
-      usuario: req.usuario.id
+      usuario: req.usuario.id,
+      carpeta: carpeta || null
     });
     await foto.save();
     res.status(201).json(foto);

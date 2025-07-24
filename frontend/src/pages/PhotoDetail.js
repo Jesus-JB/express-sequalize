@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import { FaArrowLeft, FaTag } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 function renderStars(calificacion) {
   const n = Math.max(1, Math.min(5, Number(calificacion)));
@@ -27,6 +28,15 @@ export default function PhotoDetail() {
   const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  // Obtener usuario autenticado del token
+  let user = null;
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      user = jwtDecode(token);
+    }
+  } catch {}
 
   useEffect(() => {
     api.get(`/fotos/${id}`)
@@ -74,6 +84,31 @@ export default function PhotoDetail() {
             <span key={et._id} className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium"><FaTag className="text-blue-400" />{et.nombre}</span>
           ))}
         </div>
+        {/* Mostrar propietario */}
+        {foto.usuario && (
+          <div className="mb-2 text-sm text-gray-500">Propietario: {foto.usuario.email || foto.usuario._id || foto.usuario}</div>
+        )}
+        {/* Botones solo para admin o dueño */}
+        {user && (user.rol === 'admin' || (foto.usuario && (String(foto.usuario) === user._id || String(foto.usuario._id) === user._id))) && (
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => navigate(`/photo/${foto._id}/edit`)}
+              className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded font-semibold transition"
+            >Editar</button>
+            <button
+              onClick={async () => {
+                if (!window.confirm("¿Eliminar esta foto?")) return;
+                try {
+                  await api.delete(`/fotos/${foto._id}`);
+                  navigate("/gallery");
+                } catch {
+                  alert("Error al eliminar la foto");
+                }
+              }}
+              className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded font-semibold transition"
+            >Eliminar</button>
+          </div>
+        )}
         <button onClick={() => navigate(-1)} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold transition flex items-center gap-2"><FaArrowLeft /> Volver</button>
       </div>
       <style>{`.animate-fade-in{animation:fadeIn .5s ease;}@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}`}</style>

@@ -8,6 +8,11 @@ const verificarJWT = require('../middleware/auth');
 const { esAdmin } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const Carpeta = require('../models/carpeta');
+const Foto = require('../models/foto');
+const Comentario = require('../models/comentario');
+const Like = require('../models/like');
+const GaleriaLike = require('../models/galerialike');
 
 // Registro de usuario (público, siempre rol usuario)
 router.post('/register', async (req, res) => {
@@ -136,6 +141,120 @@ router.delete('/:id', verificarJWT, esAdmin, async (req, res) => {
     res.json({ message: 'Usuario eliminado correctamente.' });
   } catch (err) {
     res.status(400).json({ error: 'Error al eliminar usuario.' });
+  }
+});
+
+// Listar todos los usuarios (público, solo id y email)
+router.get('/publicos', async (req, res) => {
+  try {
+    const usuarios = await Usuario.find({}, 'email');
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener usuarios.' });
+  }
+});
+
+// Galería pública de un usuario: carpetas y fotos sueltas
+router.get('/:id/galeria', async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.params.id, 'email');
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+    const carpetas = await Carpeta.find({ usuario: usuario._id });
+    const fotosSueltas = await Foto.find({ usuario: usuario._id, carpeta: null });
+    res.json({ usuario, carpetas, fotosSueltas });
+  } catch (err) {
+    res.status(400).json({ error: 'Error al obtener galería del usuario.' });
+  }
+});
+
+// --- Comentarios y likes por foto ---
+
+// Listar comentarios de una foto
+router.get('/fotos/:id/comentarios', async (req, res) => {
+  try {
+    const comentarios = await Comentario.find({ foto: req.params.id })
+      .populate('usuario', 'email')
+      .sort({ fecha: -1 });
+    res.json(comentarios);
+  } catch (err) {
+    res.status(400).json({ error: 'Error al obtener comentarios.' });
+  }
+});
+
+// Agregar comentario a una foto
+router.post('/fotos/:id/comentarios', verificarJWT, async (req, res) => {
+  try {
+    const { texto } = req.body;
+    if (!texto || !texto.trim()) return res.status(400).json({ error: 'El comentario no puede estar vacío.' });
+    const comentario = new Comentario({
+      usuario: req.usuario.id,
+      foto: req.params.id,
+      texto: texto.trim()
+    });
+    await comentario.save();
+    await comentario.populate('usuario', 'email');
+    res.status(201).json(comentario);
+  } catch (err) {
+    res.status(400).json({ error: 'Error al agregar comentario.' });
+  }
+});
+
+// Obtener likes de una foto
+router.get('/fotos/:id/likes', async (req, res) => {
+  try {
+    const total = await Like.countDocuments({ foto: req.params.id });
+    let dadoLike = false;
+    if (req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const jwt = require('jsonwebtoken');
+        const SECRET = process.env.JWT_SECRET || 'secreto_jwt';
+        const payload = jwt.verify(token, SECRET);
+        dadoLike = !!(await Like.findOne({ foto: req.params.id, usuario: payload.id }));
+      } catch {}
+    }
+    res.json({ total, dadoLike });
+  } catch (err) {
+    res.status(400).json({ error: 'Error al obtener likes.' });
+  }
+});
+
+// Dar like a una foto
+router.post('/fotos/:id/like', verificarJWT, async (req, res) => {
+  try {
+    await Like.findOneAndUpdate(
+      { foto: req.params.id, usuario: req.usuario.id },
+      { $set: { fecha: new Date() } },
+      { upsert: true, new: true }
+    );
+    res.json({ message: 'Like registrado' });
+  } catch (err) {
+    res.status(400).json({ error: 'Error al dar like.' });
+  }
+});
+
+// Quitar like a una foto
+router.post('/fotos/:id/unlike', verificarJWT, async (req, res) => {
+  try {
+    await Like.deleteOne({ foto: req.params.id, usuario: req.usuario.id });
+    res.json({ message: 'Like eliminado' });
+  } catch (err) {
+    res.status(400).json({ error: 'Error al quitar like.' });
+  }
+});
+
+// Promedio de likes por foto de un usuario
+router.get('/:id/like-promedio', async (req, res) => {
+  try {
+    const fotos = await Foto.find({ usuario: req.params.id });
+    if (!fotos.length) return res.json({ promedio: 0 });
+    const fotoIds = fotos.map(f => f._id);
+    const likesPorFoto = await Promise.all(fotoIds.map(async id => await Like.countDocuments({ foto: id })));
+    const suma = likesPorFoto.reduce((a, b) => a + b, 0);
+    const promedio = suma / fotos.length;
+    res.json({ promedio: Math.round(promedio * 100) / 100 });
+  } catch (err) {
+    res.status(400).json({ error: 'Error al calcular promedio de likes.' });
   }
 });
 

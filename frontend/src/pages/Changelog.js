@@ -2,6 +2,17 @@ import { FaHistory, FaCheckCircle } from "react-icons/fa";
 
 const changelog = [
   {
+    version: "v0.2.0",
+    date: "24-07-2025",
+    changes: [
+      "Ahora cada usuario tiene su propia galería privada de fotos y carpetas.",
+      "Puedes crear carpetas para organizar tus fotos o subir fotos sueltas.",
+      "La página principal muestra la lista de usuarios y puedes explorar la galería pública de cualquier usuario.",
+      "Mejoras visuales y de navegación en la experiencia de usuario.",
+      "Solo puedes acceder a tu galería personal si has iniciado sesión."
+    ]
+  },
+  {
     version: "v0.1.1",
     date: "23-07-2025",
     changes: [

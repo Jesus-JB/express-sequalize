@@ -15,6 +15,8 @@ import EditPhoto from "./pages/EditPhoto";
 import Users from "./pages/Users";
 import Info from "./pages/Info";
 import Changelog from "./pages/Changelog";
+import UserGallery from "./pages/UserGallery";
+import CarpetaPublica from "./pages/CarpetaPublica";
 
 function App() {
   return (
@@ -66,6 +68,8 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/user/:id/gallery" element={<UserGallery />} />
+        <Route path="/carpeta/:id" element={<CarpetaPublica />} />
         <Route path="/info" element={<Info />} />
         <Route path="/changelog" element={<Changelog />} />
         <Route path="*" element={<NotFound />} />

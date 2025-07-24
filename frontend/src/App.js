@@ -13,6 +13,8 @@ import Profile from "./pages/Profile";
 import Footer from "./components/Footer";
 import EditPhoto from "./pages/EditPhoto";
 import Users from "./pages/Users";
+import Info from "./pages/Info";
+import Changelog from "./pages/Changelog";
 
 function App() {
   return (
@@ -64,6 +66,8 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/info" element={<Info />} />
+        <Route path="/changelog" element={<Changelog />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

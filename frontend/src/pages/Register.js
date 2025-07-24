@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,13 +51,23 @@ export default function Register() {
           </div>
           <div className="mb-6">
             <label className="block mb-2 font-medium">Contraseña</label>
-            <input
-              type="password"
-              className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition pr-10"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                onClick={() => setShowPassword(v => !v)}
+                tabIndex={-1}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
           {error && (
             <div className="mb-4 text-red-600 text-center flex items-center justify-center gap-2">
@@ -81,6 +93,10 @@ export default function Register() {
             )}
           </button>
         </form>
+        <div className="mt-4 text-center">
+          <span className="text-sm text-gray-700">¿Ya tienes una cuenta? </span>
+          <button className="text-blue-600 hover:underline text-sm" onClick={() => navigate('/login')}>Inicia sesión</button>
+        </div>
       </div>
     </div>
   );

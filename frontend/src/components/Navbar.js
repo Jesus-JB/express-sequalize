@@ -39,6 +39,8 @@ export default function Navbar() {
       </div>
       <div className="space-x-4 flex items-center">
         <NavLink to="/gallery" className={({ isActive }) => isActive ? "underline font-semibold" : "hover:underline"}>Galería</NavLink>
+        <NavLink to="/info" className={({ isActive }) => isActive ? "underline font-semibold" : "hover:underline"}>Info</NavLink>
+        <NavLink to="/changelog" className={({ isActive }) => isActive ? "underline font-semibold" : "hover:underline"}>Changelog</NavLink>
         {isAuth && (
           <>
             <NavLink to="/upload" className={({ isActive }) => isActive ? "underline font-semibold" : "hover:underline"}>Subir Foto</NavLink>

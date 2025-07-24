@@ -58,7 +58,8 @@ router.post('/', verificarJWT, upload.single('imagen'), async (req, res) => {
       descripcion,
       calificacion,
       ruta,
-      etiquetas: Array.isArray(etiquetas) ? etiquetas : etiquetas ? [etiquetas] : []
+      etiquetas: Array.isArray(etiquetas) ? etiquetas : etiquetas ? [etiquetas] : [],
+      usuario: req.usuario.id
     });
     await foto.save();
     res.status(201).json(foto);
@@ -73,6 +74,12 @@ router.put('/:id', verificarJWT, upload.single('imagen'), async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: 'ID de foto inválido' });
     }
+    const foto = await Foto.findById(req.params.id);
+    if (!foto) return res.status(404).json({ error: 'Foto no encontrada' });
+    // Solo el dueño o admin puede editar
+    if (req.usuario.rol !== 'admin' && String(foto.usuario) !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para editar esta foto' });
+    }
     const { titulo, descripcion, calificacion, etiquetas } = req.body;
     let updateData = {
       titulo,
@@ -83,9 +90,8 @@ router.put('/:id', verificarJWT, upload.single('imagen'), async (req, res) => {
     if (req.file) {
       updateData.ruta = 'images/' + req.file.filename;
     }
-    const foto = await Foto.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    if (!foto) return res.status(404).json({ error: 'Foto no encontrada' });
-    res.json(foto);
+    const updatedFoto = await Foto.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(updatedFoto);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -97,8 +103,13 @@ router.delete('/:id', verificarJWT, async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: 'ID de foto inválido' });
     }
-    const deleted = await Foto.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Foto no encontrada' });
+    const foto = await Foto.findById(req.params.id);
+    if (!foto) return res.status(404).json({ error: 'Foto no encontrada' });
+    // Solo el dueño o admin puede eliminar
+    if (req.usuario.rol !== 'admin' && String(foto.usuario) !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para eliminar esta foto' });
+    }
+    await Foto.findByIdAndDelete(req.params.id);
     res.json({ message: 'Foto eliminada' });
   } catch (error) {
     res.status(400).json({ error: error.message });
